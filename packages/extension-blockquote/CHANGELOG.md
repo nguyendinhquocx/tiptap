@@ -1,5 +1,13 @@
 # Change Log
 
+## 3.27.4
+
+### Patch Changes
+
+- 6238a3c: Add `@tiptap/pm` as a peer dependency so bundlers resolve ProseMirror packages from the app instead of duplicating `prosemirror-model` inside `@tiptap/extension-blockquote`.
+  - @tiptap/core@3.27.4
+  - @tiptap/pm@3.27.4
+
 ## 3.27.3
 
 ### Patch Changes
