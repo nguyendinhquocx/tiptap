@@ -1,5 +1,68 @@
 # Change Log
 
+## 3.27.3
+
+### Patch Changes
+
+- Updated dependencies [023f98c]
+  - @tiptap/core@3.27.3
+  - @tiptap/pm@3.27.3
+
+## 3.27.2
+
+### Patch Changes
+
+- e5316b9: Fix the static renderer ignoring `unhandledNode` and `unhandledMark` for node or mark types missing from the schema; such content now falls back to those renderers instead of throwing in `Node.fromJSON`
+- Updated dependencies [ceebb31]
+  - @tiptap/pm@3.27.2
+  - @tiptap/core@3.27.2
+
+## 3.27.1
+
+### Patch Changes
+
+- @tiptap/core@3.27.1
+- @tiptap/pm@3.27.1
+
+## 3.27.0
+
+### Patch Changes
+
+- Updated dependencies [0d0094d]
+- Updated dependencies [795033c]
+- Updated dependencies [0e0c4f9]
+- Updated dependencies [6d12bb9]
+  - @tiptap/core@3.27.0
+  - @tiptap/pm@3.27.0
+
+## 3.26.1
+
+### Patch Changes
+
+- @tiptap/core@3.26.1
+- @tiptap/pm@3.26.1
+
+## 3.26.0
+
+### Patch Changes
+
+- @tiptap/core@3.26.0
+- @tiptap/pm@3.26.0
+
+## 3.25.0
+
+### Patch Changes
+
+- 6490a1d: Fix blockquote markdown rendering to add a trailing newline so subsequent content is not incorrectly included in the blockquote
+- 2dc3df6: Fix the types of the JSON static renderers (`renderJSONContentToReactElement` and `renderJSONContentToString`): you can now pass `JSONContent` directly and read node fields like `node.text` in your mappings without type errors or casts.
+- Updated dependencies [ec291dd]
+- Updated dependencies [454e9b8]
+- Updated dependencies [9cf8db0]
+- Updated dependencies [c1a2ce8]
+- Updated dependencies [3d4f94c]
+  - @tiptap/core@3.25.0
+  - @tiptap/pm@3.25.0
+
 ## 3.24.0
 
 ### Patch Changes
