@@ -30,32 +30,23 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Configure pnpm store
-        run: pnpm config set store-dir ${{ github.workspace }}/${{ env.PNPM_STORE_DIR }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          store-dir: ${{ env.PNPM_STORE_DIR }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
       - name: Pack dependency artifacts
-        run: |
-          tar -czf /tmp/pnpm-store.tar.gz ${{ env.PNPM_STORE_DIR }}
+        run: tar -czf /tmp/pnpm-store.tar.gz ${{ env.PNPM_STORE_DIR }}
 
       - name: Upload dependency artifacts
         uses: actions/upload-artifact@v7
         with:
           name: node-dependencies
-          path: |
-            /tmp/pnpm-store.tar.gz
+          path: /tmp/pnpm-store.tar.gz
           retention-days: 1
 
   check-linting-formatting:
@@ -104,30 +95,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          store-dir: ${{ env.PNPM_STORE_DIR }}
 
-      - name: Configure pnpm store
-        run: pnpm config set store-dir ${{ github.workspace }}/${{ env.PNPM_STORE_DIR }}
-
-      - name: Download dependency artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: node-dependencies
-          path: /tmp/node-dependencies
-
-      - name: Restore pnpm store
-        run: tar -xzf /tmp/node-dependencies/pnpm-store.tar.gz
-
-      - name: Restore dependencies
-        run: pnpm install --offline --frozen-lockfile --strict-peer-dependencies
+      - uses: ./.github/actions/restore-dependencies
 
       - name: Build packages
         run: pnpm run build && pnpm run build:demos
@@ -142,6 +116,26 @@ jobs:
           path: /tmp/build-output.tar.gz
           retention-days: 1
 
+  check-linting-formatting:
+    name: Check linting & formatting
+    runs-on: ubuntu-latest
+    needs: build-packages
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          store-dir: ${{ env.PNPM_STORE_DIR }}
+
+      - uses: ./.github/actions/restore-dependencies
+
+      - name: Run linting and formatting checks
+        run: pnpm run lint
+
   run-unit-tests:
     name: Run unit tests
     runs-on: ubuntu-latest
@@ -151,39 +145,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          store-dir: ${{ env.PNPM_STORE_DIR }}
 
-      - name: Configure pnpm store
-        run: pnpm config set store-dir ${{ github.workspace }}/${{ env.PNPM_STORE_DIR }}
+      - uses: ./.github/actions/restore-dependencies
 
-      - name: Download dependency artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: node-dependencies
-          path: /tmp/node-dependencies
-
-      - name: Restore pnpm store
-        run: tar -xzf /tmp/node-dependencies/pnpm-store.tar.gz
-
-      - name: Restore dependencies
-        run: pnpm install --offline --frozen-lockfile --strict-peer-dependencies
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: build-output
-          path: /tmp/build-output
-
-      - name: Restore build output
-        run: tar -xzf /tmp/build-output/build-output.tar.gz
+      - uses: ./.github/actions/restore-build
 
       - name: Run unit tests
         run: pnpm run test:unit
@@ -202,24 +172,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          store-dir: ${{ env.PNPM_STORE_DIR }}
 
-      - name: Configure pnpm store
-        run: pnpm config set store-dir ${{ github.workspace }}/${{ env.PNPM_STORE_DIR }}
+      - uses: ./.github/actions/restore-dependencies
 
-      - name: Download dependency artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: node-dependencies
-          path: /tmp/node-dependencies
+      - uses: ./.github/actions/restore-build
 
       - name: Restore pnpm store
         run: tar -xzf /tmp/node-dependencies/pnpm-store.tar.gz
@@ -276,30 +237,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+          store-dir: ${{ env.PNPM_STORE_DIR }}
 
-      - name: Configure pnpm store
-        run: pnpm config set store-dir ${{ github.workspace }}/${{ env.PNPM_STORE_DIR }}
-
-      - name: Download dependency artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: node-dependencies
-          path: /tmp/node-dependencies
-
-      - name: Restore pnpm store
-        run: tar -xzf /tmp/node-dependencies/pnpm-store.tar.gz
-
-      - name: Restore dependencies
-        run: pnpm install --offline --frozen-lockfile --strict-peer-dependencies
+      - uses: ./.github/actions/restore-dependencies
 
       - name: Download blob reports
         uses: actions/download-artifact@v8
