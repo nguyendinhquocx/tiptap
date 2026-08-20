@@ -43,7 +43,10 @@ jobs:
         run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
       - name: Run build
-        run: pnpm run build && pnpm run build:demos
+        run: vp run build && vp run build:demos
+
+      - name: Check package exports
+        run: vp run check:package-exports
 
       - name: Archive package dist artifacts
         run: tar -cf package-dist-artifacts.tar packages/*/dist packages-deprecated/*/dist
@@ -101,7 +104,7 @@ jobs:
         run: tar -xf package-dist-artifacts.tar
 
       - name: Verify package dist artifacts
-        run: bash ./scripts/check-package-dists.sh
+        run: bash ./scripts/check-package-dists.sh && vp run check:package-exports
 
       - name: Resolve npm dist-tag
         id: resolve_dist_tag
