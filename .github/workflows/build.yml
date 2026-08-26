@@ -2,7 +2,8 @@ name: Verify
 
 env:
   NODE_VERSION: 24
-  VP_GIT_HOOKS: 0
+  PNPM_VERSION: 11.2.2
+  PNPM_STORE_DIR: .pnpm-store
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
