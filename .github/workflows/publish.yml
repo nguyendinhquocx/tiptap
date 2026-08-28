@@ -4,6 +4,8 @@ env:
   NODE_VERSION: 24
   PNPM_VERSION: 11.2.2
 
+# this branch only releases from main
+# other versions are released from their respective maintenance/* branches
 on:
   push:
     branches:
